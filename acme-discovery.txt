@@ -1,0 +1,9 @@
+Customer: We're interested in personalization, but our security review process is strict and the timeline cannot drag out for months.
+
+SE: That makes sense. We often help teams tie the business case to engagement lift and ROI.
+
+Customer: We'd also want a dashboard export and ideally a Slack alert when a key insight is triggered.
+
+SE: Are there any systems that need to connect on day one?
+
+Customer: Salesforce and Snowflake would be the big ones.
