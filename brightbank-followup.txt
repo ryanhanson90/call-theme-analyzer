@@ -1,9 +1,0 @@
-Customer: The biggest concern from our side is budget. If implementation takes too long, we'll lose momentum with stakeholders.
-
-SE: Understood. Which capabilities feel most important for phase one?
-
-Customer: Better reporting, workflow automation, and cleaner transaction enrichment data. Our CRM team will also ask about Salesforce integration.
-
-SE: Any collaboration tooling mentioned internally?
-
-Customer: Microsoft Teams is used heavily, and we'd love notifications there too.
