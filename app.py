@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 import argparse
 import cgi
@@ -517,9 +516,16 @@ def send_email(subject: str, body: str) -> None:
         method="POST",
     )
 
-    with urlopen(request, timeout=30) as response:
-        if response.status >= 400:
-            raise RuntimeError(f"Resend API returned status {response.status}")
+    try:
+        with urlopen(request, timeout=30) as response:
+            if response.status >= 400:
+                raise RuntimeError(f"Resend API returned status {response.status}")
+    except Exception as exc:
+        try:
+            error_body = exc.read().decode("utf-8")
+        except Exception:
+            error_body = str(exc)
+        raise RuntimeError(f"Resend error: {error_body}")
 
 
 def has_digest_been_sent(conn: sqlite3.Connection, target_day: date) -> bool:
@@ -892,22 +898,17 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def run_server() -> None:
-    print(f"BINDING SERVER ON {HOST}:{PORT}", flush=True)
     server = ThreadingHTTPServer((HOST, PORT), AppHandler)
     print(f"Serving on http://{HOST}:{PORT}", flush=True)
     server.serve_forever()
 
 
 def main() -> None:
-    print("INSIDE MAIN", flush=True)
     parser = build_parser()
     args = parser.parse_args()
     command = args.command or "serve"
 
-    print("CREATING STATIC DIR", flush=True)
     STATIC_DIR.mkdir(exist_ok=True)
-
-    print("INITIALIZING DATABASE", flush=True)
     initialize_database()
 
     if command == "send-digest":
@@ -919,11 +920,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    import traceback
-
-    try:
-        print("APP STARTING", flush=True)
-        main()
-    except Exception:
-        traceback.print_exc()
-        raise
+    main()
