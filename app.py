@@ -22,7 +22,7 @@ from zoneinfo import ZoneInfo
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "data.db"
 STATIC_DIR = BASE_DIR / "static"
-HOST = "0.0.0.0"
+HOST = "127.0.0.1"
 PORT = int(os.environ.get("PORT", "8000"))
 APP_TIMEZONE = ZoneInfo(os.environ.get("APP_TIMEZONE", "America/Boise"))
 WEBHOOK_AUTH_HEADER = os.environ.get("WEBHOOK_AUTH_HEADER", "Authorization")
@@ -746,6 +746,14 @@ class AppHandler(BaseHTTPRequestHandler):
             self.respond_html(render_theme_page(theme, mentions))
             return
 
+        if parsed.path == "/send-test-digest":
+            try:
+                message = send_daily_digest(datetime.now(APP_TIMEZONE).date(), force=True)
+            except Exception as exc:
+                message = f"Digest test failed: {exc}"
+            self.redirect(f"/?message={self.url_quote(message)}")
+            return
+
         if parsed.path.startswith("/static/"):
             file_path = STATIC_DIR / Path(parsed.path).name
             if file_path.exists():
@@ -831,6 +839,17 @@ class AppHandler(BaseHTTPRequestHandler):
         self.send_response(HTTPStatus.SEE_OTHER)
         self.send_header("Location", location)
         self.end_headers()
+
+    def url_quote(self, value: str) -> str:
+        safe = []
+        for char in value:
+            if char.isalnum() or char in "-_.~":
+                safe.append(char)
+            elif char == " ":
+                safe.append("+")
+            else:
+                safe.append(f"%{ord(char):02X}")
+        return "".join(safe)
 
     def respond_html(self, payload: bytes) -> None:
         self.send_response(HTTPStatus.OK)
