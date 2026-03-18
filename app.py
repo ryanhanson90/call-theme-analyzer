@@ -22,7 +22,7 @@ from zoneinfo import ZoneInfo
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "data.db"
 STATIC_DIR = BASE_DIR / "static"
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 PORT = int(os.environ.get("PORT", "8000"))
 APP_TIMEZONE = ZoneInfo(os.environ.get("APP_TIMEZONE", "America/Boise"))
 WEBHOOK_AUTH_HEADER = os.environ.get("WEBHOOK_AUTH_HEADER", "Authorization")
